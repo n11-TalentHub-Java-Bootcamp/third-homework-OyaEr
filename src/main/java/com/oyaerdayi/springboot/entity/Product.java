@@ -16,6 +16,16 @@ public class Product {
     private String createDate;
     private String categoryId;
 
+    public Product(String id, String name, BigDecimal price, String createDate, String categoryId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.createDate = createDate;
+        this.categoryId = categoryId;
+    }
+
+
+
     public String getId() {
         return id;
     }

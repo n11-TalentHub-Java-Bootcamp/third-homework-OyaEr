@@ -14,6 +14,14 @@ public class ProductComment {
     private String productId;
     private String userId;
 
+    public ProductComment(String id, String comment, String commentDate, String productId, String userId) {
+        this.id = id;
+        this.comment = comment;
+        this.commentDate = commentDate;
+        this.productId = productId;
+        this.userId = userId;
+    }
+
     public String getId() {
         return id;
     }
