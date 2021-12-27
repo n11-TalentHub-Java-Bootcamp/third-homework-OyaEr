@@ -1,5 +1,6 @@
 package com.oyaerdayi.springboot.service.entityService;
 
+import com.oyaerdayi.springboot.dto.UserDto;
 import com.oyaerdayi.springboot.entity.User;
 import com.oyaerdayi.springboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

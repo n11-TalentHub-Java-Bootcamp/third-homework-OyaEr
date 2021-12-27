@@ -1,5 +1,7 @@
 package com.oyaerdayi.springboot.controller;
 
+import com.oyaerdayi.springboot.converter.UserConverter;
+import com.oyaerdayi.springboot.dto.UserDto;
 import com.oyaerdayi.springboot.entity.User;
 import com.oyaerdayi.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,13 +20,27 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/userList")
-    public List<User> findAll() {
-        return userService.findAll();
+    public List<UserDto> findAll() {
+        List<User> userList;
+
+        userList = userService.findAll();
+
+        List<UserDto> userDtoList = new ArrayList<UserDto>();
+
+
+        for (User user : userList) {
+            UserDto userDto = UserConverter.INSTANCE.convertUserToUserDto(user);
+            userDtoList.add(userDto);
+        }
+
+        return userDtoList;
     }
 
     @GetMapping("/user/{id}")
-    public User findById(@PathVariable String id) {
-        return userService.findById(id);
+    public UserDto findById(@PathVariable String id) {
+        User user = userService.findById(id);
+        UserDto userDto = UserConverter.INSTANCE.convertUserToUserDto(user);
+        return userDto;
     }
 
     @PostMapping("")
