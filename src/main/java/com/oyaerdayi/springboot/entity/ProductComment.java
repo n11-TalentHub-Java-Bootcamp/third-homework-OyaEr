@@ -4,8 +4,10 @@ package com.oyaerdayi.springboot.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 @Document(collection="productComment")
-public class ProductComment {
+public class ProductComment implements Serializable {
 
     @Id
     private String id;

@@ -1,5 +1,7 @@
 package com.oyaerdayi.springboot.controller;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.oyaerdayi.springboot.converter.UserConverter;
 import com.oyaerdayi.springboot.dto.UserDto;
 import com.oyaerdayi.springboot.entity.User;
@@ -7,6 +9,7 @@ import com.oyaerdayi.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,31 +23,47 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/userList")
-    public List<UserDto> findAll() {
+    public MappingJacksonValue findAll() {
         List<User> userList;
 
         userList = userService.findAll();
 
-        List<UserDto> userDtoList = new ArrayList<UserDto>();
+        List<UserDto> userDtoList = UserConverter.INSTANCE.convertUserListToUserDtoList(userList);
 
 
-        for (User user : userList) {
-            UserDto userDto = UserConverter.INSTANCE.convertUserToUserDto(user);
-            userDtoList.add(userDto);
-        }
+        SimpleBeanPropertyFilter filter= SimpleBeanPropertyFilter.filterOutAllExcept("name","surname","userName");
 
-        return userDtoList;
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("UserDtoFilter",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(userDtoList);
+
+        mapping.setFilters(filters);
+
+
+
+        return mapping;
+
     }
 
     @GetMapping("/user/{id}")
-    public UserDto findById(@PathVariable String id) {
+    public MappingJacksonValue findById(@PathVariable String id) {
         User user = userService.findById(id);
         UserDto userDto = UserConverter.INSTANCE.convertUserToUserDto(user);
-        return userDto;
+
+        SimpleBeanPropertyFilter filter= SimpleBeanPropertyFilter.filterOutAllExcept("name","surname","userName");
+
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("UserDtoFilter",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(userDto);
+
+        mapping.setFilters(filters);
+        return mapping;
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> save(@RequestBody User user) {
+    public ResponseEntity<Object> save(@RequestBody UserDto userDto) {
+
+        User user = UserConverter.INSTANCE.convertUserDtoToUser(userDto);
 
         user = userService.save(user);
 
