@@ -12,8 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+
+//Bu class Kullanıcı işlemlerini gerçekleştirmek için yazılmıştır.
 
 @RestController
 @RequestMapping("/api/users")

@@ -3,21 +3,18 @@ package com.oyaerdayi.springboot.controller;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.oyaerdayi.springboot.converter.ProductCommentConverter;
-import com.oyaerdayi.springboot.converter.UserConverter;
 import com.oyaerdayi.springboot.dto.ProductCommentDto;
-import com.oyaerdayi.springboot.dto.UserDto;
 import com.oyaerdayi.springboot.entity.ProductComment;
-import com.oyaerdayi.springboot.entity.User;
 import com.oyaerdayi.springboot.service.ProductCommentService;
-import com.oyaerdayi.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
+
+
+//Bu class ÜrünYorum işlemlerini gerçekleştirmek için yazılmıştır.
 
 @RestController
 @RequestMapping("/api/comments")
