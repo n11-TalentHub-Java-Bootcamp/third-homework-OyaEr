@@ -1,5 +1,7 @@
 package com.oyaerdayi.springboot.controller;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.oyaerdayi.springboot.converter.ProductCommentConverter;
 import com.oyaerdayi.springboot.converter.UserConverter;
 import com.oyaerdayi.springboot.dto.ProductCommentDto;
@@ -11,6 +13,7 @@ import com.oyaerdayi.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,40 +27,56 @@ public class ProductCommentController {
     private ProductCommentService productCommentService;
 
     @GetMapping("/commentList")
-    public List<ProductCommentDto> findAll() {
+    public MappingJacksonValue findAll() {
 
         List<ProductComment> commentList;
 
         commentList = productCommentService.findAll();
 
-        List<ProductCommentDto> commentDtoList = new ArrayList<ProductCommentDto>();
+        List<ProductCommentDto> commentDtoList = ProductCommentConverter.INSTANCE.convertProductCommentListToProductCommentDtoList(commentList);
 
 
-        for (ProductComment comment : commentList) {
-            ProductCommentDto commentDto = ProductCommentConverter.INSTANCE.convertProductCommentToProductCommentDto(comment);
-            commentDtoList.add(commentDto);
-        }
+        SimpleBeanPropertyFilter filter= SimpleBeanPropertyFilter.filterOutAllExcept("comment","commentDate");
 
-        return commentDtoList;
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("ProductCommentDtoFilter",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(commentDtoList);
+
+        mapping.setFilters(filters);
+
+
+
+        return mapping;
 
 
     }
 
     @GetMapping("/comment/{id}")
-    public ProductCommentDto findById(@PathVariable String id) {
+    public MappingJacksonValue findById(@PathVariable String id) {
         ProductComment comment = productCommentService.findById(id);
+
         ProductCommentDto commentDto = ProductCommentConverter.INSTANCE.convertProductCommentToProductCommentDto(comment);
-        return commentDto;
+
+        SimpleBeanPropertyFilter filter= SimpleBeanPropertyFilter.filterOutAllExcept("comment","commentDate");
+
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("ProductCommentDtoFilter",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(commentDto);
+
+        mapping.setFilters(filters);
+        return mapping;
 
 
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> save(@RequestBody ProductComment productComment) {
+    public ResponseEntity<Object> save(@RequestBody ProductCommentDto commentDto) {
 
-        productComment = productCommentService.save(productComment);
+        ProductComment comment = ProductCommentConverter.INSTANCE.convertProductCommentDtoToProductComment(commentDto);
 
-        return new ResponseEntity<>(productComment, HttpStatus.CREATED);
+        comment = productCommentService.save(comment);
+
+        return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
